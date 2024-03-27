@@ -30,6 +30,8 @@ import java.util.Optional;
 public class CarRegisterImp implements ICarRegister {
     @Autowired
     private CarRepo carRepo;
+
+
     @Autowired
     private DealerRepository dealerRepo;
     @Autowired
@@ -53,10 +55,6 @@ public class CarRegisterImp implements ICarRegister {
 //              dealerRepo.save(dealer);
               carRepo.save(car);
               return "car Added";
-
-
-//        System.out.println("4");
-
 
 
 
