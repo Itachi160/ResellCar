@@ -32,6 +32,9 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
     public List<Car> getPendingAndActivateCar();
 
     public Optional<List<Car>> getByDealerId(Integer dealerId);
+
+    @Query("SELECT c FROM Car c WHERE c.carStatus = 'pending' OR c.carStatus = 'active' ORDER BY c.id DESC")
+    List<Car> getPendingAndActivateCarOrderedByCreatedAtDesc();
 }
 
 
