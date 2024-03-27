@@ -107,34 +107,30 @@ public class CarRegisterImp implements ICarRegister {
 
 
     @Override
-    public List<CarDto> getAllCarsWithPages(int PageNo) {
-        List<Car> listOfCar = carRepo.getPendingAndActivateCar();
-        if((PageNo*10)>listOfCar.size()-1){
-            throw new PageNotFoundException("page not found");
-
+    public List<CarDto> getAllCarsWithPages(int pageNo, int pageSize) {
+        List<Car> listOfCar = carRepo.getPendingAndActivateCarOrderedByCreatedAtDesc();
+        if (listOfCar.isEmpty()) {
+            throw new CarNotFoundException("Car not found", HttpStatus.NOT_FOUND);
         }
-        if(listOfCar.size()<=0){throw new CarNotFoundException("car not found",HttpStatus.NOT_FOUND);}
-//        System.out.println("list of de"+listOfCar.size());
+
+        int totalCars = listOfCar.size();
+        int totalPages = (int) Math.ceil((double) totalCars / pageSize);
+
+        if (pageNo < 0 || pageNo >= totalPages) {
+            throw new PageNotFoundException("Page not found");
+        }
+
+        int pageStart = (pageNo) * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalCars);
+
         List<CarDto> listOfCarDto = new ArrayList<>();
-
-        int pageStart=PageNo*10;
-        int pageEnd=pageStart+10;
-        int diff=(listOfCar.size()) - pageStart;
-        for(int counter=pageStart,i=1;counter<pageEnd;counter++,i++){
-            if(pageStart>listOfCar.size()){break;}
-
-
-                CarDto carDto = new CarDto(listOfCar.get(counter));
-                carDto.setCarId(listOfCar.get(counter).getId());
-                listOfCarDto.add(carDto);
-
-
-            if(diff == i){
-                break;
-            }
+        for (int i = pageStart; i < pageEnd; i++) {
+            Car car = listOfCar.get(i);
+            CarDto carDto = new CarDto(car);
+            carDto.setCarId(car.getId());
+            listOfCarDto.add(carDto);
         }
 
-//        System.out.println(listOfCar);
         return listOfCarDto;
     }
 
