@@ -1,3 +1,4 @@
+
 package com.spring.jwt.security;
 
 import com.spring.jwt.entity.Dealer;
@@ -57,6 +58,8 @@ public class UserDetailsServiceCustom implements UserDetailsService {
             if (dealer != null) {
                 firstName = dealer.getFirstname();
                 dealerId = String.valueOf(dealer.getId());
+                userId = String.valueOf(dealer.getUser().getId());
+
             }
         } else if (authorities.contains(new SimpleGrantedAuthority("USER"))) {
             firstName = user.getProfile().getFirstName();
@@ -77,4 +80,3 @@ public class UserDetailsServiceCustom implements UserDetailsService {
     }
 
 }
-
