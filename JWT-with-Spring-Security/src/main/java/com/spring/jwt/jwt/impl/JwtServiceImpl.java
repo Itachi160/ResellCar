@@ -72,6 +72,7 @@ public class JwtServiceImpl implements JwtService {
 
         if (roles.contains("DEALER")) {
             dealerId = userDetailsCustom.getDealerId();
+            userId=userDetailsCustom.getUserId();
         } else if (roles.contains("USER")) {
             userId = userDetailsCustom.getUserId();
             userProfileId = userDetailsCustom.getUserProfileId();
@@ -138,3 +139,4 @@ public class JwtServiceImpl implements JwtService {
 
 
 }
+
