@@ -7,6 +7,8 @@ import com.spring.jwt.entity.Status;
 import com.spring.jwt.exception.CarNotFoundException;
 import com.spring.jwt.exception.DealerNotFoundException;
 import com.spring.jwt.exception.PageNotFoundException;
+import com.spring.jwt.repository.CarRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +18,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/car")
 public class
 CarController {
-    @Autowired
-    private ICarRegister iCarRegister;
+
+    private final ICarRegister iCarRegister;
+
+    private final CarRepo carRepo;
 
     @PostMapping(value = "/carregister")
     public ResponseEntity<ResponseDto> carRegistration(@RequestBody CarDto carDto) {
@@ -49,42 +54,41 @@ CarController {
 
     }
     @GetMapping("/getAllCars")
-    public ResponseEntity<ResponseAllCarDto> getAllCars(@RequestParam int pageNo){
-        try
-        {
-            List<CarDto> listOfCar= iCarRegister.getAllCarsWithPages(pageNo);
-
-            ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("success");
-            responseAllCarDto.setList(listOfCar);
+    public ResponseEntity<?> getAllCars(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
+        try {
+            List<CarDto> listOfCar = iCarRegister.getAllCarsWithPages(pageNo, pageSize);
+            int totalPages = getTotalPages(pageSize);
+            ResponsenewCarDto responseAllCarDto = new ResponsenewCarDto("success", listOfCar, totalPages);
             return ResponseEntity.status(HttpStatus.OK).body(responseAllCarDto);
-
-        }
-    catch (CarNotFoundException carNotFoundException){
-//            List<CarDto> emptyList;
-        ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccess");
-        responseAllCarDto.setException("car not found");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
-
-    }
-        catch (PageNotFoundException pageNotFoundException){
+        } catch (CarNotFoundException carNotFoundException) {
             ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccess");
-            responseAllCarDto.setException("page not found");
+            responseAllCarDto.setException("Car not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
-
+        } catch (PageNotFoundException pageNotFoundException) {
+            ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccess");
+            responseAllCarDto.setException("Page not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
         }
+    }
+
+    private int getTotalPages(int pageSize) {
+        int totalCars = carRepo.getPendingAndActivateCarOrderedByCreatedAtDesc().size();
+        return (int) Math.ceil((double) totalCars / pageSize);
     }
 
 
     @DeleteMapping("/removeCar")
-    public ResponseEntity<ResponseDto> deleteCar(@RequestParam int carId){
+    public ResponseEntity<ResponseDto> deleteCar(@RequestParam int carId, @RequestParam int dealerId){
         try {
 
-            String result =iCarRegister.deleteCar(carId);
+            String result =iCarRegister.deleteCar(carId,dealerId);
 
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success",result));
         }
         catch (CarNotFoundException carNotFoundException){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess","car not found"));
+        }catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess",e.getMessage()));
 
         }
     }

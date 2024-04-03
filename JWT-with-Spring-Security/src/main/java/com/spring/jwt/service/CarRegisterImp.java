@@ -30,6 +30,8 @@ import java.util.Optional;
 public class CarRegisterImp implements ICarRegister {
     @Autowired
     private CarRepo carRepo;
+
+
     @Autowired
     private DealerRepository dealerRepo;
     @Autowired
@@ -53,10 +55,6 @@ public class CarRegisterImp implements ICarRegister {
 //              dealerRepo.save(dealer);
               carRepo.save(car);
               return "car Added";
-
-
-//        System.out.println("4");
-
 
 
 
@@ -109,51 +107,52 @@ public class CarRegisterImp implements ICarRegister {
 
 
     @Override
-    public List<CarDto> getAllCarsWithPages(int PageNo) {
-        List<Car> listOfCar = carRepo.getPendingAndActivateCar();
-        if((PageNo*10)>listOfCar.size()-1){
-            throw new PageNotFoundException("page not found");
-
+    public List<CarDto> getAllCarsWithPages(int pageNo, int pageSize) {
+        List<Car> listOfCar = carRepo.getPendingAndActivateCarOrderedByCreatedAtDesc();
+        if (listOfCar.isEmpty()) {
+            throw new CarNotFoundException("Car not found", HttpStatus.NOT_FOUND);
         }
-        if(listOfCar.size()<=0){throw new CarNotFoundException("car not found",HttpStatus.NOT_FOUND);}
-//        System.out.println("list of de"+listOfCar.size());
+
+        int totalCars = listOfCar.size();
+        int totalPages = (int) Math.ceil((double) totalCars / pageSize);
+
+        if (pageNo < 0 || pageNo >= totalPages) {
+            throw new PageNotFoundException("Page not found");
+        }
+
+        int pageStart = (pageNo) * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalCars);
+
         List<CarDto> listOfCarDto = new ArrayList<>();
-
-        int pageStart=PageNo*10;
-        int pageEnd=pageStart+10;
-        int diff=(listOfCar.size()) - pageStart;
-        for(int counter=pageStart,i=1;counter<pageEnd;counter++,i++){
-            if(pageStart>listOfCar.size()){break;}
-
-
-                CarDto carDto = new CarDto(listOfCar.get(counter));
-                carDto.setCarId(listOfCar.get(counter).getId());
-                listOfCarDto.add(carDto);
-
-
-            if(diff == i){
-                break;
-            }
+        for (int i = pageStart; i < pageEnd; i++) {
+            Car car = listOfCar.get(i);
+            CarDto carDto = new CarDto(car);
+            carDto.setCarId(car.getId());
+            listOfCarDto.add(carDto);
         }
 
-//        System.out.println(listOfCar);
         return listOfCarDto;
     }
 
     @Override
-    public String deleteCar(int id) {
-        Car carDetail = carRepo.findById(id).orElseThrow(()->new CarNotFoundException("car not found",HttpStatus.NOT_FOUND));
-        Long carDocumentPhotoId=carDetail.getCarPhotoId();
-
-        if(carDocumentPhotoId == 0){
-            carRepo.deleteById(id);
-            return "car details deleted";
+    public String deleteCar(int carId, int dealerId) {
+        Optional<Car> carOptional = carRepo.findById(carId);
+        if (carOptional.isPresent()) {
+            Car carDetail = carOptional.get();
+            int cardealerId = carDetail.getDealerId();
+            if (cardealerId == dealerId) {
+                Long carDocumentPhotoId = carDetail.getCarPhotoId();
+                if (carDocumentPhotoId != null && carDocumentPhotoId != 0) {
+                    photoRepo.deleteById(carDocumentPhotoId);
+                }
+                carRepo.deleteById(carId);
+                return "Car details deleted";
+            } else {
+                throw new RuntimeException("You are not authorized to delete this car");
+            }
+        } else {
+            throw new CarNotFoundException("Car not found", HttpStatus.NOT_FOUND);
         }
-        carDetail.setCarPhotoId(0);
-        photoRepo.deleteById(carDocumentPhotoId);
-
-        carRepo.deleteById(id);
-        return "car details deleted";
     }
 
 
@@ -297,7 +296,6 @@ public class CarRegisterImp implements ICarRegister {
         carDto.setPowerWindowFeature(car.getPowerWindowFeature());
         carDto.setRearParkingCameraFeature(car.getRearParkingCameraFeature());
         carDto.setSafetyDescription(car.getSafetyDescription());
-        // Map other properties of the Car entity to corresponding properties of CarDto
         return carDto;
     }
 }

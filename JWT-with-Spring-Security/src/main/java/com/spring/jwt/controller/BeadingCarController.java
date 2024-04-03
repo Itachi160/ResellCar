@@ -51,6 +51,7 @@ public class BeadingCarController {
         }
     }
 
+
     @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseDto> deleteBeadingCar(@PathVariable("id") Integer beadingCarId) {
         try {
@@ -74,6 +75,7 @@ public class BeadingCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while editing beading car details"));
         }
     }
+
     @GetMapping("/getByUserId1/{userId}")
     public ResponseEntity<?> getBeadingCarsByUserId(@PathVariable("userId") int userId) {
         try {
