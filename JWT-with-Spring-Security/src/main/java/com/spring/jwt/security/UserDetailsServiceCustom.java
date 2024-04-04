@@ -1,7 +1,7 @@
-
 package com.spring.jwt.security;
 
 import com.spring.jwt.entity.Dealer;
+import com.spring.jwt.entity.InspectorProfile;
 import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BaseException;
 import com.spring.jwt.repository.UserRepository;
@@ -37,9 +37,6 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 
     private UserDetailsCustom getUserDetails(String username) {
         User user = userRepository.findByEmail(username);
-
-
-
         if (ObjectUtils.isEmpty(user)) {
             throw new BaseException(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Invalid username or password!");
         }
@@ -52,6 +49,7 @@ public class UserDetailsServiceCustom implements UserDetailsService {
         String dealerId = null;
         String userId = null;
         String userProfileId = null;
+        String inspectorProfileId=null;
 
         if (authorities.contains(new SimpleGrantedAuthority("DEALER"))) {
             Dealer dealer = user.getDealer();
@@ -65,6 +63,13 @@ public class UserDetailsServiceCustom implements UserDetailsService {
             firstName = user.getProfile().getFirstName();
             userProfileId = String.valueOf(user.getProfile().getId());
             userId = String.valueOf(user.getId());
+        } else if (authorities.contains(new SimpleGrantedAuthority("INSPECTOR"))) {
+            InspectorProfile inspectorProfile = user.getInspectorProfile();
+            if (inspectorProfile != null) {
+                firstName = inspectorProfile.getFirstName();
+                inspectorProfileId = String.valueOf(inspectorProfile.getId());
+                userId = String.valueOf(user.getId());
+            }
         }
 
         return new UserDetailsCustom(
@@ -74,6 +79,7 @@ public class UserDetailsServiceCustom implements UserDetailsService {
                 dealerId,
                 userId,
                 userProfileId,
+                inspectorProfileId,
                 authorities
         );
 

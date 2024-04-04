@@ -41,6 +41,9 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Userprofile profile;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private InspectorProfile inspectorProfile;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Dealer dealer;
 
