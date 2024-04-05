@@ -1,17 +1,19 @@
 package com.spring.jwt.repository;
 
-import com.spring.jwt.entity.PlacedBid;
+import com.spring.jwt.entity.Final1stBid;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface FinalBidRepo extends JpaRepository<PlacedBid, Integer> {
+public interface FinalBidRepo extends JpaRepository<Final1stBid, Integer> {
 
-    List<PlacedBid> findByUserId(Integer userId);
+    List<Final1stBid> findByUserId(Integer userId);
 
-    List<PlacedBid> findByBidCarId(Integer bidCarId);
+    public Final1stBid findByBidCarId(Integer bidCarId);
+
+    public  Final1stBid findByPlacedBidId(Integer placedBidId);
 
     @Query("SELECT pb FROM PlacedBid pb WHERE pb.bidCarId = :bidCarId ORDER BY pb.amount DESC LIMIT 1")
-    List<PlacedBid> findTop1ByBidCarIdOrderByAmountDesc(Integer bidCarId);
+    public Final1stBid findTop1ByBidCarIdOrderByAmountDesc(Integer bidCarId);
 }
