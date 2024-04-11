@@ -5,10 +5,7 @@ import com.spring.jwt.dto.PasswordChange;
 import com.spring.jwt.dto.RegisterDto;
 import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.dto.UserProfileDto;
-import com.spring.jwt.entity.Dealer;
-import com.spring.jwt.entity.Role;
-import com.spring.jwt.entity.User;
-import com.spring.jwt.entity.Userprofile;
+import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.*;
 import com.spring.jwt.repository.RoleRepository;
 import com.spring.jwt.repository.UserProfileRepository;
@@ -97,8 +94,15 @@ public class UserServiceImpl implements UserService {
 
             user.setDealer(dealer);
             dealer.setUser(user);
+        }else if (role.getName().equals("INSPECTOR")) {
+            InspectorProfile inspectorProfile = new InspectorProfile();
+            inspectorProfile.setAddress(registerDto.getAddress());
+            inspectorProfile.setCity(registerDto.getCity());
+            inspectorProfile.setFirstName(registerDto.getFirstName());
+            inspectorProfile.setLastName(registerDto.getLastName());
+            user.setInspectorProfile(inspectorProfile);
+            inspectorProfile.setUser(user);
         }
-
         return user;
     }
 
