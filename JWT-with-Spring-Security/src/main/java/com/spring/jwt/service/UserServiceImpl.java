@@ -81,6 +81,7 @@ public class UserServiceImpl implements UserService {
             user.setProfile(profile);
             profile.setUser(user);
         } else if (role.getName().equals("DEALER")) {
+
             Dealer dealer = new Dealer();
             dealer.setAddress(registerDto.getAddress());
             dealer.setArea(registerDto.getArea());
@@ -94,7 +95,8 @@ public class UserServiceImpl implements UserService {
 
             user.setDealer(dealer);
             dealer.setUser(user);
-        }else if (role.getName().equals("INSPECTOR")) {
+
+        } else if (role.getName().equals("INSPECTOR")) {
             InspectorProfile inspectorProfile = new InspectorProfile();
             inspectorProfile.setAddress(registerDto.getAddress());
             inspectorProfile.setCity(registerDto.getCity());
@@ -171,7 +173,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundExceptions("User not found", HttpStatus.NOT_FOUND);
         }
 
-       // System.out.println("List of users: " + listOfUsers.size());
+        // System.out.println("List of users: " + listOfUsers.size());
 
         List<UserProfileDto> listOfUserDto = new ArrayList<>();
 
@@ -186,7 +188,7 @@ public class UserServiceImpl implements UserService {
             }
             Optional<User> users=userRepository.findById(listOfUsers.get(counter).getUser().getId());
             if(users.isEmpty()){throw new UserNotFoundExceptions("User not found ");}
-          // System.out.println("*");
+            // System.out.println("*");
 
             UserProfileDto userProfileDto = new UserProfileDto(listOfUsers.get(counter),users.get());
 
@@ -260,7 +262,7 @@ public class UserServiceImpl implements UserService {
 
         if(user.isPresent()){
 
-           User users= user.get().getUser();
+            User users= user.get().getUser();
 
             userRepository.DeleteById(users.getId());
 

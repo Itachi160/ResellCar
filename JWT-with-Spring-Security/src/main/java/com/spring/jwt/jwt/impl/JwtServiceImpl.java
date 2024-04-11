@@ -70,11 +70,17 @@ public class JwtServiceImpl implements JwtService {
 
         String userProfileId = null;
 
+        String inspectorProfileId=null;
+
         if (roles.contains("DEALER")) {
             dealerId = userDetailsCustom.getDealerId();
+            userId=userDetailsCustom.getUserId();
         } else if (roles.contains("USER")) {
             userId = userDetailsCustom.getUserId();
             userProfileId = userDetailsCustom.getUserProfileId();
+        } else if (roles.contains("INSPECTOR")) {
+            userId=userDetailsCustom.getUserId();
+            inspectorProfileId = userDetailsCustom.getInspectorProfileId();
         }
 
 
@@ -84,6 +90,7 @@ public class JwtServiceImpl implements JwtService {
                 .claim("dealerId", dealerId)
                 .claim("userId", userId)
                 .claim("userProfileId", userProfileId)
+                .claim("inspectorProfileId", inspectorProfileId)
                 .claim("authorities", userDetailsCustom.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .claim("roles", roles)
                 .claim("isEnable", userDetailsCustom.isEnabled())
@@ -138,3 +145,4 @@ public class JwtServiceImpl implements JwtService {
 
 
 }
+

@@ -18,4 +18,7 @@ public class BeadingCarNotFoundException extends RuntimeException{
         this.httpStatus = httpStatus;
 
     }
+
+    public BeadingCarNotFoundException(String s) {
+    }
 }

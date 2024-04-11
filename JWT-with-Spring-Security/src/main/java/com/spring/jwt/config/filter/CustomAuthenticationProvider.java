@@ -5,14 +5,17 @@ import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BaseException;
 import com.spring.jwt.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -41,6 +44,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }catch (Exception e){
             throw new BaseException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "User's not found");
         }
+        if (user == null || !passwordMatches(password, user.getPassword())) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
 
         final List<GrantedAuthority> authorities = getAuthorities(user.getRoles().stream().toList());
 
@@ -49,7 +55,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         log.info("End actual authentication");
         return auth;
     }
-
+    private boolean passwordMatches(String rawPassword, String encodedPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
     private List<GrantedAuthority> getAuthorities(List<Role> roles) {
         List<GrantedAuthority> result = new ArrayList<>();
         Set<String> permissions = new HashSet<>();
