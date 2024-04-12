@@ -30,6 +30,7 @@ public class InspectorProfile {
     @Column(name = "last_name", length = 45)
     private String lastName;
 
+
     @OneToOne
     @JoinColumn(name = "UserId")
     private User user;
