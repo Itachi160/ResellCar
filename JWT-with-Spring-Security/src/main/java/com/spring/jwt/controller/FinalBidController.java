@@ -24,7 +24,7 @@ public class FinalBidController {
     public ResponseEntity<ResponseDto> finalPlaceBid(@RequestBody FinalBidDto finalBidDto) {
         try {
             String result = final1stBidService.FinalPlaceBid(finalBidDto);
-            ResponseDto responseDto = new ResponseDto("Bid placed successfully.", result);
+            ResponseDto responseDto = new ResponseDto("Success", result);
             return ResponseEntity.ok(responseDto);
         } catch (BidAmountLessException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto("unsuccessfull", "Bid amount is less."));
