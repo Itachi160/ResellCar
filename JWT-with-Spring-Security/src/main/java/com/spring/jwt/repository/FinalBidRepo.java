@@ -14,6 +14,6 @@ public interface FinalBidRepo extends JpaRepository<Final1stBid, Integer> {
 
     public  Final1stBid findByPlacedBidId(Integer placedBidId);
 
-    @Query("SELECT pb FROM PlacedBid pb WHERE pb.bidCarId = :bidCarId ORDER BY pb.amount DESC LIMIT 1")
+//    @Query("SELECT pb FROM PlacedBid pb WHERE pb.bidCarId = :bidCarId ORDER BY pb.amount DESC LIMIT 1")
     public Final1stBid findTop1ByBidCarIdOrderByAmountDesc(Integer bidCarId);
 }

@@ -2,6 +2,8 @@ package com.spring.jwt.controller;
 
 
 import com.spring.jwt.dto.FinalBidDto;
+import com.spring.jwt.dto.ResponceDto;
+import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.entity.Final1stBid;
 import com.spring.jwt.exception.*;
 import com.spring.jwt.service.Final1stBidServiceImpl;
@@ -19,14 +21,21 @@ public class FinalBidController {
     private final Final1stBidServiceImpl final1stBidService;
 
     @PostMapping("/place")
-    public ResponseEntity<String> finalPlaceBid(@RequestBody FinalBidDto finalBidDto, @RequestParam Integer bidCarId) {
+    public ResponseEntity<ResponseDto> finalPlaceBid(@RequestBody FinalBidDto finalBidDto) {
         try {
-            String result = final1stBidService.FinalPlaceBid(finalBidDto, bidCarId);
-            return ResponseEntity.ok(result);
-        } catch (BidAmountLessException | BidForSelfAuctionException | BeadingCarNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            String result = final1stBidService.FinalPlaceBid(finalBidDto);
+            ResponseDto responseDto = new ResponseDto("Bid placed successfully.", result);
+            return ResponseEntity.ok(responseDto);
+        } catch (BidAmountLessException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto("unsuccessfull", "Bid amount is less."));
+        } catch (BidForSelfAuctionException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto("unsuccessfull", "User cannot bid for their own auction."));
+        } catch (BeadingCarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccessfull", "Car not found."));
         }
     }
+
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<FinalBidDto>> getByUserId(@PathVariable Integer userId) {

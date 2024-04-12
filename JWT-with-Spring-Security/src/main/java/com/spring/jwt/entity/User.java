@@ -1,5 +1,6 @@
 package com.spring.jwt.entity;
 
+import com.spring.jwt.Wallet.Entity.Account;
 import com.spring.jwt.dto.DealerDto;
 import com.spring.jwt.dto.RegisterDto;
 import com.spring.jwt.dto.UserProfileDto;
@@ -46,6 +47,9 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Dealer dealer;
+
+    @OneToOne(mappedBy = "user" , cascade = CascadeType.ALL)
+    private Account account;
 
 
 

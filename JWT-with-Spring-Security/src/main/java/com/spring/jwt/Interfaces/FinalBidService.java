@@ -7,7 +7,7 @@ import com.spring.jwt.exception.BidForSelfAuctionException;
 import java.util.List;
 
 public interface FinalBidService {
-    public String FinalPlaceBid(FinalBidDto finalBidDto, Integer bidCarId) throws BidAmountLessException, BidForSelfAuctionException;
+    public String FinalPlaceBid(FinalBidDto finalBidDto) throws BidAmountLessException, BidForSelfAuctionException;
 
     public List<FinalBidDto> getByUserId(Integer userId);
 
