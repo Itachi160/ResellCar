@@ -14,7 +14,7 @@ public class Final1stBid {
     @Column(name = "placed1stBidId")
     private Integer placed1stBidId;
 
-    @Column(name = "placedBid")
+    @Column(name = "placedBidId")
     private Integer placedBidId;
 
     @Column(name = "userId")
