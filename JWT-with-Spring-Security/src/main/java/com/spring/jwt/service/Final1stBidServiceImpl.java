@@ -41,13 +41,10 @@ public class Final1stBidServiceImpl implements FinalBidService {
         if (byId.isEmpty()){
             throw new BeadingCarNotFoundException("Bid cannot be placed as the car is not found in our database");
         }
-
         BidCars bidCar = byId.get();
-
         if (finalBidDto.getUserId().equals(bidCar.getUserId())) {
             throw new BidForSelfAuctionException("User cannot bid for their own auction.");
         }
-
         Final1stBid final1stBid = convertToEntity(finalBidDto);
         final1stBid.setBidCarId(bidCarId);
         final1stBid.setDateTime(LocalDateTime.now());
@@ -64,7 +61,6 @@ public class Final1stBidServiceImpl implements FinalBidService {
         if (user.isEmpty()) {
             throw new UserNotFoundExceptions("User not found with ID: " + userId);
         }
-
         List<Final1stBid> finalBidDtos = finalBidRepo.findByUserId(userId);
         return finalBidDtos.stream()
                 .map(this::convertToDto)

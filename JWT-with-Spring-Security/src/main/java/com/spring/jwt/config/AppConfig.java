@@ -119,6 +119,8 @@ public class AppConfig {
                 .requestMatchers("/Bidding/v1/**").permitAll()
                 .requestMatchers("/Bid/**").permitAll()
                 .requestMatchers("/ispProfile/**").permitAll()
+                .requestMatchers("/WalletAccount/**").permitAll()
+                .requestMatchers("/transactions/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationManager(manager)
