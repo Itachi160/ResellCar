@@ -1,6 +1,5 @@
 package com.spring.jwt.Wallet.Entity;
 
-import com.spring.jwt.entity.Status;
 import com.spring.jwt.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,39 +8,39 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "account")
-public class Account  {
+@Table(name = "walletAccount")
+public class WalletAccount {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "accountId", nullable = false)
-        private Integer AccountId;
-
-        @Column(name = "email", nullable = false, length = 250)
-         private String email;
-
-        @Column(name = "mobile_no")
-        private String mobileNo;
+        private Integer accountId;
 
         @Column(name = "openingBalance")
-        private Integer OpeningBalance;
+        private Integer openingBalance;
 
         @Column(name = "status")
-        private String Status;
+        private String status;
 
         @Column(name = "LastUpdateTime")
-        private LocalDateTime LastUpdateTime;
+        private LocalDateTime lastUpdateTime;
 
-        @OneToOne
-        @JoinColumn(name = "UserId")
+        @Column(name = "panCard")
+        private String panCard;
+
+        @ManyToOne
+        @JoinColumn(name = "UserId", unique = true)
         private User user;
 
+        @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+        private List<Transaction> transactions;
 
-    }
 
+}
