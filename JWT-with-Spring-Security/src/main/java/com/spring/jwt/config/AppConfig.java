@@ -108,6 +108,8 @@ public class AppConfig {
                 .requestMatchers("/BeadingCarController/**").permitAll()
                 .requestMatchers("/booking/**").hasAnyAuthority("USER", "ADMIN","DEALER")
                 .requestMatchers("/userProfilePhoto/**").permitAll()
+                .requestMatchers("/uploadFile/**").permitAll()
+
                 .requestMatchers("/confirmBooking/**").permitAll()
                 .requestMatchers("/photo/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
