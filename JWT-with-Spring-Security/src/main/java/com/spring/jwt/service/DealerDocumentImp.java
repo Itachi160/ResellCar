@@ -25,7 +25,7 @@ public class DealerDocumentImp implements IDealerPhoto {
     public long addphoto(byte[] data){
         DocumentPhoto photo = new DocumentPhoto();
         photo.setPhoto1(data);
-        photoRepo.save(photo);
+
         return photo.getId();
     }
 
@@ -33,41 +33,30 @@ public class DealerDocumentImp implements IDealerPhoto {
     @Override
     public byte[] getPhotoData(Long id) {
         // Retrieve the photo entity from the database based on the provided ID
-        DocumentPhoto photo = photoRepo.findById(id).orElse(null);
 
-        if (photo != null) {
-            return photo.getPhoto1();
-        } else {
+
             return null;
-        }
+
     }
 
     @Override
     public void updatePhoto(Long id, byte[] data) {
         // Retrieve the photo entity from the database based on the provided ID
-        DocumentPhoto photo = photoRepo.findById(id).orElse(null);
 
-        if (photo != null) {
             // Update the photo data
-            photo.setPhoto1(data);
 
             // Save the updated photo to the database
-            photoRepo.save(photo);
         }
+
+    @Override
+    public void deletePhoto(Long id, int dealerId) {
+
     }
 
     @Override
-    public void deletePhoto(Long id,int dealerId) {
-        // Delete the photo from the database based on the provided ID
-        Optional<Dealer> dealer = dealerRepository.findById(dealerId);
-        dealer.get().setDealerDocumentPhoto(0);
-        photoRepo.deleteById(id);
-    }
+    public void setDealerPhotoIdInCar(int carId, long carPhotoId) {
 
-    @Override
-    public void setDealerPhotoIdInCar(int dealerId,long dealerPhotoId){
-        Optional<Dealer> dealer = dealerRepository.findById(dealerId);
-        dealer.get().setDealerDocumentPhoto(dealerPhotoId);
-        dealerRepository.save(dealer.get());
     }
 }
+
+
