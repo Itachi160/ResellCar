@@ -3,9 +3,12 @@ package com.spring.jwt.Wallet.Controller;
 
 import com.spring.jwt.Wallet.Dto.CreateWalletAccountDTO;
 import com.spring.jwt.Wallet.Dto.WalletAccountDTO;
+
 import com.spring.jwt.Wallet.Interface.AccountService;
 import com.spring.jwt.dto.ResponseDto;
+import com.spring.jwt.dto.NewResponseDto;
 import com.spring.jwt.exception.AccountAlreadyExistsException;
+import com.spring.jwt.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +25,25 @@ public class AccountControllers {
         this.accountService = accountService;
     }
 
-    @GetMapping
-    public List<WalletAccountDTO> getAllAccounts() {
-        return accountService.getAllAccounts();
+    @GetMapping("getAllAccount")
+    public ResponseEntity<?> getAllAccounts() {
+        List<WalletAccountDTO> accounts = accountService.getAllAccounts();
+        return ResponseEntity.ok(new NewResponseDto("Accounts retrieved successfully", accounts, null));
     }
 
-    @GetMapping("/{id}")
-    public WalletAccountDTO getAccountById(@PathVariable(value = "id") Integer accountId) {
-        return accountService.getAccountById(accountId);
+    @GetMapping("getById/{id}")
+    public ResponseEntity<?> getAccountById(@PathVariable(value = "id") Integer accountId) {
+        try {
+            WalletAccountDTO accountDTO = accountService.getAccountById(accountId);
+            return ResponseEntity.ok(new NewResponseDto("Account retrieved successfully", accountDTO, null));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NewResponseDto("Account not found", null, e));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new NewResponseDto("Error occurred", null, ex));
+        }
     }
 
-    @PostMapping
+    @PostMapping("create/wallet")
     public ResponseEntity<ResponseDto> createAccount(@RequestBody CreateWalletAccountDTO requestDTO) {
         ResponseDto response = new ResponseDto();
         try {

@@ -73,4 +73,9 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
         accountRepository.delete(account);
     }
+
+    @Override
+    public WalletAccountDTO getByUserId(Integer UserId) {
+        return null;
+    }
 }
