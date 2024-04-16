@@ -9,6 +9,7 @@ import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.dto.NewResponseDto;
 import com.spring.jwt.exception.AccountAlreadyExistsException;
 import com.spring.jwt.exception.ResourceNotFoundException;
+import com.spring.jwt.exception.UserNotFoundExceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +69,21 @@ public class AccountControllers {
     }
 
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<NewResponseDto> getAccountByUserId(@PathVariable(value = "userId") Integer userId) {
+        try {
+            WalletAccountDTO accountDTO = accountService.getByUserId(userId);
+            return ResponseEntity.ok().body(new NewResponseDto("Success", accountDTO, null));
+        } catch (UserNotFoundExceptions ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NewResponseDto("Error", null, ex));
+        } catch (AccountAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NewResponseDto("Error", null, ex));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new NewResponseDto("Error", null, e));
+        }
+    }
+
     @PutMapping("/{id}")
     public WalletAccountDTO updateAccount(@PathVariable(value = "id") Integer accountId,
                                     @RequestBody WalletAccountDTO accountDTO) {
@@ -79,4 +95,6 @@ public class AccountControllers {
         accountService.deleteAccount(accountId);
         return ResponseEntity.ok().build();
     }
+
+
 }

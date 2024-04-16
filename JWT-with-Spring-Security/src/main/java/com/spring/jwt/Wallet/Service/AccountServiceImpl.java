@@ -75,9 +75,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public WalletAccountDTO getByUserId(Integer UserId) {
-        return null;
+    public WalletAccountDTO getByUserId(Integer userId) {
+        try {
+            WalletAccount account = accountRepository.findByUserId(userId)
+                    .orElseThrow(() -> new AccountAlreadyExistsException("Wallet account not found with user id: " + userId));
 
-
+            return modelMapper.map(account, WalletAccountDTO.class);
+        } catch (AccountAlreadyExistsException ex) {
+            throw ex;
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving wallet account by user id: " + userId, e);
+        }
     }
 }
