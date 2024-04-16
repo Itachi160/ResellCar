@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService {
 
             user.setDealer(dealer);
             dealer.setUser(user);
+
         } else if (role.getName().equals("INSPECTOR")) {
             InspectorProfile inspectorProfile = new InspectorProfile();
             inspectorProfile.setAddress(registerDto.getAddress());
@@ -104,7 +105,6 @@ public class UserServiceImpl implements UserService {
             user.setInspectorProfile(inspectorProfile);
             inspectorProfile.setUser(user);
         }
-
         return user;
     }
 

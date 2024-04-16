@@ -14,4 +14,5 @@ public class FinalBidDto {
     private LocalDateTime dateTime;
     private Integer amount;
 
+
 }

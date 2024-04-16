@@ -34,12 +34,17 @@ public class Final1stBidServiceImpl implements FinalBidService {
     private final UserRepository userRepository;
 
     @Override
-    public String FinalPlaceBid(FinalBidDto finalBidDto, Integer bidCarId) throws BidAmountLessException, BidForSelfAuctionException {
+    public String FinalPlaceBid(FinalBidDto finalBidDto) throws BidAmountLessException, BidForSelfAuctionException {
+        Integer bidCarId = finalBidDto.getBidCarId();
         Optional<BidCars> byId = bidCarsRepo.findById(bidCarId);
+
         if (byId.isEmpty()){
             throw new BeadingCarNotFoundException("Bid cannot be placed as the car is not found in our database");
         }
-        if (finalBidDto.getUserId().equals(finalBidDto.getUserId())) {
+
+        BidCars bidCar = byId.get();
+
+        if (finalBidDto.getUserId().equals(bidCar.getUserId())) {
             throw new BidForSelfAuctionException("User cannot bid for their own auction.");
         }
 
