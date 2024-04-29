@@ -47,69 +47,13 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     @Override
     public BidDetailsDTO getbyBidId(Integer bidCarId, Integer beadingCarId) {
-        Optional<BidCars> bidCarOptional  = bidCarsRepo.findById(bidCarId);
-        Optional<BeadingCAR> beadingCarOptional  = beadingCarRepo.findById(beadingCarId);
-
-        if (bidCarOptional.isPresent() && beadingCarOptional.isPresent()) {
-            BidCars bidCar = bidCarOptional.get();
-            BeadingCAR beadingCar = beadingCarOptional.get();
-
-            BidDetailsDTO bidDetailsDTO = new BidDetailsDTO();
-
-            bidDetailsDTO.setBidCarId(bidCar.getBidCarId());
-            bidDetailsDTO.setBeadingCarId(beadingCar.getBeadingCarId());
-            bidDetailsDTO.setClosingTime(bidCar.getClosingTime());
-            bidDetailsDTO.setCreatedAt(bidCar.getCreatedAt());
-            bidDetailsDTO.setMusicFeature(beadingCar.getMusicFeature());
-            bidDetailsDTO.setArea(beadingCar.getArea());
-            bidDetailsDTO.setBodyType(beadingCar.getBodyType());
-            bidDetailsDTO.setBrand(beadingCar.getBrand());
-            bidDetailsDTO.setCarInsurance(beadingCar.getCarInsurance());
-            bidDetailsDTO.setCarStatus(beadingCar.getCarStatus());
-            bidDetailsDTO.setCity(beadingCar.getCity());
-            bidDetailsDTO.setColor(beadingCar.getColor());
-            bidDetailsDTO.setDescription(beadingCar.getDescription());
-            bidDetailsDTO.setFuelType(beadingCar.getFuelType());
-            bidDetailsDTO.setKmDriven(beadingCar.getKmDriven());
-            bidDetailsDTO.setModel(beadingCar.getModel());
-            bidDetailsDTO.setNoOfWheels(beadingCar.getNoOfWheels());
-            bidDetailsDTO.setOwnerSerial(beadingCar.getOwnerSerial());
-            bidDetailsDTO.setPowerWindowFeature(beadingCar.getPowerWindowFeature());
-            bidDetailsDTO.setPrice(beadingCar.getPrice());
-            bidDetailsDTO.setRearParkingCameraFeature(beadingCar.getRearParkingCameraFeature());
-            bidDetailsDTO.setRegistration(beadingCar.getRegistration());
-            bidDetailsDTO.setSafetyDescription(beadingCar.getSafetyDescription());
-            bidDetailsDTO.setTransmission(beadingCar.getTransmission());
-            bidDetailsDTO.setTyre(beadingCar.getTyre());
-            bidDetailsDTO.setYear(beadingCar.getYear());
-            bidDetailsDTO.setDate(beadingCar.getDate());
-            bidDetailsDTO.setUserId(beadingCar.getUserId());
-
-            return bidDetailsDTO;
-        }else {
-            throw new RuntimeException("Bid car or Beading car not found");
-        }
+        return null;
     }
 
     @Override
     public List<BidCarsDTO> getByUserId(Integer userId) {
-        User user = userRepository.findByUserId(userId);
-        if (user == null) {
-            throw new UserNotFoundExceptions("User with ID: " + userId + " not found", HttpStatus.NOT_FOUND);
-        }
-
-        List<BeadingCAR> beadingCars = beadingCarRepo.findByUserId(userId);
-        if (beadingCars.isEmpty()) {
-            throw new BeadingCarNotFoundException("No Beading cars found for user with ID: " + userId, HttpStatus.NOT_FOUND);
-        }
-
-        List<BidCarsDTO> dtos = new ArrayList<>();
-        for (BeadingCAR beadingCAR : beadingCars) {
-            dtos.add(new BidCarsDTO(beadingCAR));
-        }
-        return dtos;
+        return List.of();
     }
-
 
 
     public BidCars convertToEntity(BidCarsDTO bidCarsDTO){

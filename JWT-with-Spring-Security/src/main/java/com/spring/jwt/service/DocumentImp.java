@@ -19,39 +19,19 @@ public class DocumentImp implements IDocument {
     private final UserRepository userRepository;
     private final DocumentRepo documentRepo;
 
+
     @Override
     public String addDocument(DocumentDto documentDto) {
-        Optional<User> userDetails = userRepository.findById(documentDto.getUserId());
-        if (userDetails.isEmpty()) {
-            throw new RuntimeException("user not found by id ");
-        }
-        Document document = new Document(documentDto);
-        documentRepo.save(document);
-        return "Document uploaded successfully";
-
-
+        return "";
     }
 
     @Override
     public List<Document> getAllDocument(Integer userId, String DocumentType) {
-        List<Document> documentDetails =  documentRepo.findByDocumentTypeAndUserID(userId,DocumentType);
-        if (documentDetails.isEmpty()){
-            throw new RuntimeException("document not found by id");
-        }
-        return documentDetails;
-
-
+        return List.of();
     }
 
     @Override
     public List<Document> getByUserId(Integer userId) {
-        List<Document> document = documentRepo.findByUserId(userId);
-        if(document.isEmpty()){
-            throw new RuntimeException("document not found by user id");
-        }
-        return document;
-
-
-
+        return List.of();
     }
 }

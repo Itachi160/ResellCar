@@ -5,10 +5,7 @@ import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
 import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.entity.PlacedBid;
 import com.spring.jwt.entity.User;
-import com.spring.jwt.exception.BidAmountLessException;
-import com.spring.jwt.exception.BidNotFoundExceptions;
-import com.spring.jwt.exception.PlacedBidNotFoundExceptions;
-import com.spring.jwt.exception.UserNotFoundExceptions;
+import com.spring.jwt.exception.*;
 import com.spring.jwt.repository.BidCarsRepo;
 import com.spring.jwt.repository.PlacedBidRepo;
 import com.spring.jwt.repository.UserRepository;
@@ -33,81 +30,27 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 
 
     @Override
-    public String placeBid(PlacedBidDTO placedBidDTO, Integer bidCarId) throws BidAmountLessException {
-        Optional<BidCars> byId = bidCarsRepo.findById(bidCarId);
-        if (byId.isEmpty()){
-            throw new UserNotFoundExceptions("Bid Cannot Be Placed as Car is Not Found in Our Database");
-        }
-        PlacedBid placedBid = convertToEntity(placedBidDTO);
-        if(placedBid.getAmount()< byId.get().getBasePrice()){
-
-            throw new BidAmountLessException();
-        }
-
-          placedBid.setBidCarId(bidCarId);
-          placedBidRepo.save(placedBid);
-
-        return "Bid Placed Successfully";
+    public String placeBid(PlacedBidDTO placedBidDTO, Integer bidCarId) throws BidAmountLessException, BidForSelfAuctionException {
+        return "";
     }
 
     @Override
-    public List<PlacedBidDTO> getByUserId(Integer userId) throws UserNotFoundExceptions {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new UserNotFoundExceptions("User not found with ID: " + userId);
-        }
-        List<PlacedBid> bids = placedBidRepo.findByUserId(userId);
-        return bids.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    public List<PlacedBidDTO> getByUserId(Integer userId) {
+        return List.of();
     }
 
     @Override
-    public List<PlacedBidDTO> getByCarID(Integer bidCarId) throws BidNotFoundExceptions {
-        Optional<BidCars> bidCar = bidCarsRepo.findById(bidCarId);
-        if (bidCar.isEmpty()) {
-            throw new BidNotFoundExceptions("Bid car not found with ID: " + bidCarId);
-        }
-        List<PlacedBid> bids = placedBidRepo.findByBidCarId(bidCarId);
-        return bids.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    public List<PlacedBidDTO> getByCarID(Integer bidCarId) {
+        return List.of();
     }
 
     @Override
-    public PlacedBidDTO getById(Integer placedBidId) throws PlacedBidNotFoundExceptions {
-        Optional<PlacedBid> optionalPlacedBid = placedBidRepo.findById(placedBidId);
-        if (optionalPlacedBid.isPresent()) {
-            PlacedBid placedBid = optionalPlacedBid.get();
-            System.out.println(placedBid);
-            return convertToDto(placedBid);
-        } else {
-            throw new PlacedBidNotFoundExceptions("PlacedBid not found with ID: " + placedBidId);
-        }
+    public PlacedBidDTO getById(Integer placedBidId) {
+        return null;
     }
 
     @Override
-    public List<PlacedBidDTO> getTopThree(Integer bidCarId) throws BidNotFoundExceptions {
-        Optional<BidCars> bidCar = bidCarsRepo.findById(bidCarId);
-        if (bidCar.isEmpty()) {
-            throw new BidNotFoundExceptions("Bid car not found with ID: " + bidCarId);
-        }
-        List<PlacedBid> topThreeBids = placedBidRepo.findTop3ByBidCarIdOrderByAmountDesc(bidCarId);
-        return topThreeBids.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    public List<PlacedBidDTO> getTopThree(Integer bidCarId) {
+        return List.of();
     }
-
-    public PlacedBid convertToEntity(PlacedBidDTO placedBidDTO){
-        PlacedBid toEntity = modelMapper.map(placedBidDTO, PlacedBid.class);
-        return toEntity;
-    }
-
-    public PlacedBidDTO convertToDto(PlacedBid placedBid){
-        PlacedBidDTO toDto = modelMapper.map(placedBid, PlacedBidDTO.class);
-        return toDto;
-    }
-
-
-
 }

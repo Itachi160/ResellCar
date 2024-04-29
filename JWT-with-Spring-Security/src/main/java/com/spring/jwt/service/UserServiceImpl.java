@@ -60,6 +60,8 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+
+
     private User insertUser(RegisterDto registerDto) {
         User user = new User();
         user.setEmail(registerDto.getEmail());
@@ -123,278 +125,44 @@ public class UserServiceImpl implements UserService {
             throw new BaseException(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Invalid role");
         }
     }
-
     @Override
     public BaseResponseDTO changePassword(int id, PasswordChange passwordChange) {
-        BaseResponseDTO response = new BaseResponseDTO();
-
-        Optional<Userprofile> userOptional = userProfileRepository.findById(id);
-
-        if (userOptional.isPresent()) {
-            User user= userOptional.get().getUser();
-
-            if (passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())) {
-
-                if (passwordChange.getNewPassword().equals(passwordChange.getConfirmPassword())) {
-
-                    user.setPassword(passwordEncoder.encode(passwordChange.getNewPassword()));
-                    userRepository.save(user);
-
-                    response.setCode(String.valueOf(HttpStatus.OK.value()));
-                    response.setMessage("Password changed");
-                } else {
-                    response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
-                    throw new InvalidPasswordException("New password and confirm password does not match");
-                }
-            } else {
-                response.setCode(String.valueOf(HttpStatus.UNAUTHORIZED.value()));
-                throw new InvalidPasswordException("Invalid Password");
-            }
-
-        } else {
-
-            throw new UserNotFoundExceptions("No user found");
-        }
-        return response;
-    }
-
-    @Override
-    public List<UserProfileDto> getAllUsers(int pageNo) {
-
-        //User user= new User();
-        List<Userprofile> listOfUsers = userProfileRepository.findAll();
-
-        if ((pageNo * 10) > listOfUsers.size() - 1) {
-            throw new PageNotFoundException("Page not found");
-        }
-
-
-        if (listOfUsers.size() <= 0) {
-            throw new UserNotFoundExceptions("User not found", HttpStatus.NOT_FOUND);
-        }
-
-        // System.out.println("List of users: " + listOfUsers.size());
-
-        List<UserProfileDto> listOfUserDto = new ArrayList<>();
-
-        int pageStart = pageNo * 25;
-        int pageEnd = pageStart + 25;
-
-        int diff = (listOfUsers.size()) - pageStart;
-
-        for (int counter = pageStart, i = 1; counter < pageEnd; counter++, i++) {
-            if (pageStart > listOfUsers.size()) {
-                break;
-            }
-            Optional<User> users=userRepository.findById(listOfUsers.get(counter).getUser().getId());
-            if(users.isEmpty()){throw new UserNotFoundExceptions("User not found ");}
-            // System.out.println("*");
-
-            UserProfileDto userProfileDto = new UserProfileDto(listOfUsers.get(counter),users.get());
-
-            listOfUserDto.add(userProfileDto);
-
-            if (diff == i) {
-                break;
-            }
-        }
-        return listOfUserDto;
-    }
-
-    private UserProfileDto convertToDto(Userprofile userprofile,User user ) {
-        //User user = new User();
-        UserProfileDto userProfileDto = new UserProfileDto();
-        userProfileDto.setId(userprofile.getId());
-        userProfileDto.setAddress(userprofile.getAddress());
-        userProfileDto.setCity(userprofile.getCity());
-        userProfileDto.setFirstName(userprofile.getFirstName());
-        userProfileDto.setLastName(userprofile.getLastName());
-        userProfileDto.setMobile_no(user.getMobileNo());
-        userProfileDto.setEmail(user.getEmail());
-        return userProfileDto;
-    }
-
-    @Override
-    public UserProfileDto getUser(int id) {
-        Optional<Userprofile> userOptional = userProfileRepository.findById(id);
-
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundExceptions("User not found");
-        }
-
-        User user = userOptional.get().getUser();
-
-        return convertToDto(userOptional.get(), user);
+        return null;
     }
 
     @Override
     public BaseResponseDTO editUser(UserProfileDto userProfileDto, int id) {
-
-        BaseResponseDTO response = new BaseResponseDTO();
-
-        Optional<Userprofile> user = userProfileRepository.findById(id);
-        if(user.isPresent()){
-            user.get().setFirstName(userProfileDto.getFirstName());
-            user.get().setLastName(userProfileDto.getLastName());
-            user.get().setAddress(userProfileDto.getAddress());
-            user.get().getUser().setMobileNo(userProfileDto.getMobile_no());
-            user.get().getUser().setEmail(userProfileDto.getEmail());
-            user.get().setCity(userProfileDto.getCity());
-
-            userProfileRepository.save(user.get());
-
-            response.setCode(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("User edited");
-        } else {
-            response.setCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
-            throw new UserNotFoundExceptions("No user found");
-        }
-
-        return response;
+        return null;
     }
 
     @Override
-    @Transactional
     public BaseResponseDTO removeUser(int id) {
-        BaseResponseDTO response = new BaseResponseDTO();
-
-        Optional<Userprofile> user = userProfileRepository.findById(id);
-
-        if(user.isPresent()){
-
-            User users= user.get().getUser();
-
-            userRepository.DeleteById(users.getId());
-
-            response.setCode(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("User deleted");
-
-        } else {
-            response.setCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
-            throw new UserNotFoundExceptions("No user found");
-        }
-
-        return response;
+        return null;
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Override
+    public List<UserProfileDto> getAllUsers(int pageNo) {
+        return List.of();
+    }
+
+    @Override
+    public UserProfileDto getUser(int id) {
+        return null;
+    }
+
+    @Override
+    public void updateResetPassword(String token, String email) {
+
     }
 
     @Override
     public ResponseDto forgotPass(String email, String resetPasswordLink, String domain) throws UserNotFoundExceptions {
-        ResponseDto response = new ResponseDto();
-
-        User user = userRepository.findByEmail(email);
-
-        if (user != null) {
-
-            String message = "Hello this is Aniket";
-
-            String resetLink = resetPasswordLink;
-
-            String subject = "Checking: confirmation";
-
-            String from = "b.aniket1414@gmail.com";
-
-            String to = email;
-
-            sendEmail(message, subject, to, from, resetLink, domain);
-
-            response.setStatus(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("Email sent");
-
-        } else {
-
-            response.setStatus(String.valueOf(HttpStatus.NOT_FOUND.value()));
-            response.setMessage("User not found");
-            throw new UserNotFoundExceptions("User not found");
-        }
-
-        return response;
+        return null;
     }
 
-    // @Override
-    public void sendEmail(String message, String subject, String to, String from, String resetLink, String domain) {
-
-        String host = "smtp.gmail.com";
-
-        Properties properties = System.getProperties();
-
-        System.out.println(properties);
-
-        properties.put("mail.smtp.host", host);
-        properties.put("mail.smtp.port", "465");
-        properties.put("mail.smtp.ssl.enable", "true");
-        properties.put("mail.smtp.auth", "true");
-
-
-        Session session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("b.aniket1414@gmail.com", "egmqlowlfodymfzw");
-            }
-
-        });
-
-        String content = "To reset your password, click here: " + resetLink.replace("169.254.63.118:5173", domain);
-
-        MimeMessage m = new MimeMessage(session);
-
-        try {
-            m.setFrom(from);
-
-            m.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-            m.setSubject(subject);
-
-            m.setText(content);
-            Transport.send(m);
-
-        } catch (MessagingException e) {
-            e.printStackTrace();
-
-        }
-    }
-
-    public void updateResetPassword(String token, String email) throws UserNotFoundExceptions {
-        User user = userRepository.findByEmail(email);
-
-        if (user != null) {
-            user.setResetPasswordToken(token);
-            userRepository.save(user);
-        } else {
-            throw new UserNotFoundExceptions("could not find any user with this email");
-        }
-    }
-
+    @Override
     public ResponseDto updatePassword(String token, String newPassword) {
-        ResponseDto response = new ResponseDto();
-
-        User user = userRepository.findByResetPasswordToken(token);
-
-        if (user != null) {
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
-            String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
-
-            user.setPassword(encodedPassword);
-
-            user.setResetPasswordToken(null);
-
-            userRepository.save(user);
-
-            response.setStatus(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("Successful");
-        } else {
-            response.setStatus(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("Email sent");
-
-            throw new UserNotFoundExceptions("Something went wrong");
-        }
-
-        return response;
+        return null;
     }
 
 }

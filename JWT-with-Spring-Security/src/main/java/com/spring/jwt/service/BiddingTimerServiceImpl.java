@@ -41,46 +41,11 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
         return biddingTimerRequestDTO;
     }
 
-//    @Override
-//    public void sendNotification(String recipient, String message) {
-//
-//        SimpleMailMessage mailMessage = new SimpleMailMessage();
-//        mailMessage.setTo(recipient);
-//        mailMessage.setSubject("Bidding Timer Notification");
-//        mailMessage.setText(message);
-//        javaMailSender.send(mailMessage);
-//    }
-
+    @Override
     public void sendBulkEmails(List<String> recipients, String message) {
-        try {
-            int batchSize = 50;
-            MimeMessage[] messages = new MimeMessage[batchSize];
-            int messageIndex = 0;
 
-            for (String recipient : recipients) {
-                MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-                helper.setTo(recipient);
-                helper.setSubject("Bidding Timer Notification");
-                helper.setText(message);
-
-                messages[messageIndex++] = mimeMessage;
-
-                if (messageIndex == batchSize) {
-                    javaMailSender.send(messages);
-                    messageIndex = 0;
-                }
-            }
-
-            if (messageIndex > 0) {
-                MimeMessage[] lastMessages = new MimeMessage[messageIndex];
-                System.arraycopy(messages, 0, lastMessages, 0, messageIndex);
-                javaMailSender.send(lastMessages);
-            }
-        } catch (Exception e) {
-            logger.error("Failed to send bulk emails.", e);
-        }
     }
+
 
     public BiddingTimerRequest convertToEntity(BiddingTimerRequestDTO biddingTimerRequestDTO){
         BiddingTimerRequest biddingtime = modelMapper.map(biddingTimerRequestDTO, BiddingTimerRequest.class);

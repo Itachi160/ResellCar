@@ -26,60 +26,24 @@ public class VerifyCarServiceImpl implements CarVerify {
     public final CarVerifyRepo carVerifyRepo;
 
     public final UserRepository userRepository;
+
     @Override
     public CarVerifyDto verifyCar(CarVerifyDto carVerifyDto, Integer carId) {
-        Optional<User> userOptional = userRepository.findById(carVerifyDto.getUserId());
-        if(userOptional.isEmpty()){
-            throw new UserNotFoundExceptions("User Not Found");
-        }
-        Optional<Car> car = carRepo.findById(carId);
-        if (car.isPresent()) {
-            CarVerified carVerified = new CarVerified(carVerifyDto);
-            CarVerified save = carVerifyRepo.save(carVerified);
-            CarVerifyDto carVerifyDto1 = new CarVerifyDto(save);
-            return carVerifyDto1;
-
-
-        }else {
-            throw new CarNotFoundException("Car Not Found");
-        }
+        return null;
     }
 
     @Override
     public CarVerifyDto getVerifiedCar(Integer carVerifiedId) {
-        Optional<CarVerified> optional = carVerifyRepo.findById(carVerifiedId);
-        if (optional.isPresent()){
-            CarVerified verifyDto = optional.get();
-            CarVerifyDto carverify = new CarVerifyDto(verifyDto);
-            return carverify;
-
-        }else {
-            throw new RuntimeException("No Such CarFound");
-        }
+        return null;
     }
 
     @Override
     public List<CarVerifyDto> getCarByUserId(Integer userId) {
-        List<CarVerified> verify = carVerifyRepo.findByUserId(userId);
-        if (verify.isEmpty()){
-            throw new UserNotFoundExceptions("User Not Found");
-        }else {
-            return verify.stream()
-                    .map(CarVerifyDto::new)
-                    .collect(Collectors.toList());
-        }
+        return List.of();
     }
 
     @Override
     public List<CarVerifyDto> getByCarId(Integer carId) {
-        List<CarVerified> cars = carVerifyRepo.findByCarId(carId);
-        if (cars.isEmpty()){
-            throw new CarNotFoundException("Car Not Found with Id "+ carId);
-        }else {
-            return cars.stream()
-                    .map(CarVerifyDto::new)
-                    .collect(Collectors.toList());
-        }
+        return List.of();
     }
-
 }
